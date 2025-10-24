@@ -20,7 +20,7 @@ document.body.appendChild(clearCanvas);*/
 const ctx = canvas.getContext("2d");
 
 const lines: { x: number; y: number }[][] = [];
-const redoLines: { x: number; y: number }[] = [];
+const redoLines: { x: number; y: number }[][] = [];
 
 let currentLine: { x: number; y: number }[] | null = null;
 
@@ -83,5 +83,30 @@ document.body.append(clearButton);
 
 clearButton.addEventListener("click", () => {
   lines.splice(0, lines.length);
+  redoLines.splice(0, redoLines.length);
   canvas.dispatchEvent(changedEvent);
+});
+
+const undoButton = document.createElement("button");
+undoButton.innerHTML = "Undo";
+document.body.append(undoButton);
+
+undoButton.addEventListener("click", () => {
+  const popped = lines.pop();
+  if (popped) {
+    redoLines.push(popped);
+    canvas.dispatchEvent(changedEvent);
+  }
+});
+
+const redoButton = document.createElement("button");
+redoButton.innerHTML = "Redo";
+document.body.append(redoButton);
+
+redoButton.addEventListener("click", () => {
+  const popped = redoLines.pop();
+  if (popped) {
+    lines.push(popped);
+    canvas.dispatchEvent(changedEvent);
+  }
 });
